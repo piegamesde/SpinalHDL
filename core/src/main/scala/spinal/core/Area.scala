@@ -83,7 +83,12 @@ class ClockingArea(val clockDomain: ClockDomain) extends Area with DelayedInit {
   override def delayedInit(body: => Unit) = {
     body
 
-    if ((body _).getClass.getDeclaringClass == this.getClass) {
+    val bodyFunc = (body _)
+    val field = bodyFunc.getClass.getDeclaredFields().apply(0)
+    val a = bodyFunc.getClass.getDeclaredMethods().apply(0).getDeclaringClass.getName
+    val b = this.getClass.getName  + "$delayedInit$body"
+    val hit = a == b
+    if(hit){
       clockDomain.pop()
     }
   }
